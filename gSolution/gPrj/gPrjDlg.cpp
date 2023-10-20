@@ -69,6 +69,7 @@ BEGIN_MESSAGE_MAP(CgPrjDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_BTN_TEST, &CgPrjDlg::OnBnClickedBtnTest)
+	ON_BN_CLICKED(IDC_BTN_PROCESS, &CgPrjDlg::OnBnClickedBtnProcess)
 END_MESSAGE_MAP()
 
 
@@ -198,12 +199,14 @@ void CgPrjDlg::OnBnClickedBtnTest()
 		int x = rand() % nWidth;
 		int y = rand() % nHeight;
 		fm[y*nPitch+x] = rand()%0xff;
+
 	}
 	
 	int nIndex = 0;
+	int nTh = 100;
 	for (int j = 0; j < nHeight; j++) {
 		for (int i = 0; i < nWidth; i++) {
-			if (fm[j*nPitch + i] > 100) {
+			if (fm[j*nPitch + i] > nTh) {
 				if (m_pDlgImageResult->m_nDataCount < MAX_POINT) {
 
 					//cout << nIndex << "." << i << "," << j << endl;
@@ -223,4 +226,19 @@ void CgPrjDlg::OnBnClickedBtnTest()
 	m_pDlgImage->Invalidate();
 	m_pDlgImageResult->Invalidate();
 
+}
+
+
+#include "Process.h"
+#include <chrono>
+void CgPrjDlg::OnBnClickedBtnProcess()
+{
+	CProcess process;
+
+	auto start = std::chrono::system_clock::now();
+	int nRet = process.getStarInfo(&m_pDlgImage->m_image, 100);
+	auto end = std::chrono::system_clock::now();
+	auto millisec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+	cout << nRet << "\t" << millisec.count() << "ms" << endl;
 }
